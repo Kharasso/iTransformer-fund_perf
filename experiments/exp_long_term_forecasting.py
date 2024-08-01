@@ -40,7 +40,18 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         total_loss = []
         self.model.eval()
         with torch.no_grad():
-            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(vali_loader):
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark, data_valid) in enumerate(vali_loader):
+                # print(data_valid)
+                # print(data_valid.shape)
+                batch_x = batch_x[data_valid]
+
+                if len(batch_x) == 0:
+                    continue 
+
+                batch_y = batch_y[data_valid]
+                batch_x_mark = batch_x_mark[data_valid]
+                batch_y_mark = batch_y_mark[data_valid]
+                
                 batch_x = batch_x.float().to(self.device)
                 batch_y = batch_y.float()
 
@@ -106,11 +117,22 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
             self.model.train()
             epoch_time = time.time()
-            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(train_loader):
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark, data_valid) in enumerate(train_loader):
                 iter_count += 1
+
+                # print(data_valid)
+                # print(data_valid.shape)
+                batch_x = batch_x[data_valid]
+
+                if len(batch_x) == 0:
+                    continue 
+
+                batch_y = batch_y[data_valid]
+                batch_x_mark = batch_x_mark[data_valid]
+                batch_y_mark = batch_y_mark[data_valid]
+
                 model_optim.zero_grad()
                 batch_x = batch_x.float().to(self.device)
-
                 batch_y = batch_y.float().to(self.device)
                 if 'PEMS' in self.args.data or 'Solar' in self.args.data:
                     batch_x_mark = None
@@ -199,7 +221,18 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
         self.model.eval()
         with torch.no_grad():
-            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(test_loader):
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark, data_valid) in enumerate(test_loader):
+                # print(data_valid)
+                # print(data_valid.shape)
+                batch_x = batch_x[data_valid]
+
+                if len(batch_x) == 0:
+                    continue 
+
+                batch_y = batch_y[data_valid]
+                batch_x_mark = batch_x_mark[data_valid]
+                batch_y_mark = batch_y_mark[data_valid]
+
                 batch_x = batch_x.float().to(self.device)
                 batch_y = batch_y.float().to(self.device)
 
@@ -258,6 +291,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
         print('test shape:', preds.shape, trues.shape)
 
+
         # result save
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
@@ -291,7 +325,18 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
         self.model.eval()
         with torch.no_grad():
-            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(pred_loader):
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark, data_valid) in enumerate(pred_loader):
+                # print(data_valid)
+                # print(data_valid.shape)
+                batch_x = batch_x[data_valid]
+
+                if len(batch_x) == 0:
+                    continue 
+
+                batch_y = batch_y[data_valid]
+                batch_x_mark = batch_x_mark[data_valid]
+                batch_y_mark = batch_y_mark[data_valid]
+
                 batch_x = batch_x.float().to(self.device)
                 batch_y = batch_y.float()
                 batch_x_mark = batch_x_mark.float().to(self.device)
