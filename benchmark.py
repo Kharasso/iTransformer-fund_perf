@@ -47,9 +47,9 @@ predict_df = predict_df[predict_df.PRODUCTREFERENCE.isin(funds_to_eval)]
 predict_df['series_id'] = predict_df['PRODUCTREFERENCE']
 
 # if only including the products with enough history
-# predict_fund_history_count = predict_df.groupby(['PRODUCTREFERENCE']).agg({'date':'count'}).reset_index()
-# predict_funds = list(predict_fund_history_count.loc[predict_fund_history_count.date >= seq_len, 'PRODUCTREFERENCE'])
-# predict_df = predict_df[predict_df.PRODUCTREFERENCE.isin(predict_funds)]
+predict_fund_history_count = predict_df.groupby(['PRODUCTREFERENCE']).agg({'date':'count'}).reset_index()
+predict_funds = list(predict_fund_history_count.loc[predict_fund_history_count.date >= seq_len, 'PRODUCTREFERENCE'])
+predict_df = predict_df[predict_df.PRODUCTREFERENCE.isin(predict_funds)]
 
 def create_sliding_windows(data, window_size):
     windows = []
