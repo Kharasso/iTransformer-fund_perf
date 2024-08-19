@@ -62,7 +62,7 @@ start_list = generate_date_range(first_start, last_start, pred_len)
 end_list = generate_date_range(first_start, last_start, pred_len)
 pred_start_list = generate_date_range(datetime(2000, 4, 15) - relativedelta(months=seq_len), datetime(2020, 12, 15), pred_len)
 
-print(start_list)
+# print(start_list)
 
 # %%
 def create_sliding_windows(data, window_size):
@@ -94,10 +94,10 @@ for i in range(len(start_list)-1, -1, -1):
     test_df = test_data_df.loc[(test_data_df.date >= start_list[i]) & (test_data_df.date <= end_list[i]), perm_cols + ['exret']]
     predict_df = pred_data_df[(pred_data_df.date >= pred_start_list[i]) & (pred_data_df.date < start_list[i])]
 
-    print(sorted(train_df1.date.unique()))
-    print(sorted(train_df2.date.unique()))
-    print(sorted(test_df.date.unique()))
-    print(sorted(predict_df.date.unique()))
+    # print(sorted(train_df1.date.unique()))
+    # print(sorted(train_df2.date.unique()))
+    # print(sorted(test_df.date.unique()))
+    # print(sorted(predict_df.date.unique()))
     
     # only including funds with full pred len in test df
     test_fund_df = test_df.groupby('PRODUCTREFERENCE').agg({'date': 'count'}).reset_index()
@@ -196,8 +196,8 @@ for i in range(len(start_list)-1, -1, -1):
     # %%
     predictor.fit(
         train_data=train_data,
-        hyperparameters=hyperparameters,
-        # presets="medium_quality", 
+        # hyperparameters=hyperparameters,
+        presets="medium_quality", 
     )
 
     # %%
