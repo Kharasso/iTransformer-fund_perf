@@ -3,6 +3,7 @@ import numpy as np
 import torch
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from sklearn.preprocessing import StandardScaler
 from torcheval.metrics import R2Score
 from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
 
@@ -26,15 +27,18 @@ add_cols = [
         # 'con','ipg','tfp','term','def','dei','mkt','lab',
         'confeature', 'tfpfeature', 'ipgfeature', 'termfeature', 'deffeature', 'deifeature', 'mktfeature', 'labfeature',
         # 'ret',
-        'exret',
+        
         ]
 
+target_col = ['exret']
 
-df = df[perm_cols + add_cols]
+df = df[perm_cols + add_cols + target_col]
+scaler = StandardScaler()
+df[add_cols] = scaler.fit_transform(df[add_cols])
 
 # %%
 seq_len = 36
-pred_len = 3
+pred_len = 1
 window_size = seq_len + pred_len
 
 # %%
@@ -52,9 +56,11 @@ def generate_date_range(lower, upper, step):
     return date_list
 
 # pairs of date start and end bounds for masked time periods
-start_list = generate_date_range(datetime(2000, 4, 15), datetime(2023, 10, 15), pred_len)
-end_list = generate_date_range(datetime(2000, 6, 15), datetime(2023, 12, 15), pred_len)
-pred_start_list = generate_date_range(datetime(2000, 4, 15) - relativedelta(months=seq_len), datetime(2020, 10, 15), pred_len)
+first_start = datetime(2000, 4, 15)
+last_start = datetime(2023, 12, 15)
+start_list = generate_date_range(first_start, last_start, pred_len)
+end_list = generate_date_range(first_start, last_start, pred_len)
+pred_start_list = generate_date_range(datetime(2000, 4, 15) - relativedelta(months=seq_len), datetime(2020, 12, 15), pred_len)
 
 print(start_list)
 
@@ -168,7 +174,7 @@ for i in range(len(start_list)-1, -1, -1):
     )
 
     predictor = TimeSeriesPredictor(
-        prediction_length=3,
+        prediction_length=pred_len,
         path="benchmark/long_short_predictor_{}_{}".format(start_list[i], end_list[i]),
         target="exret",
         eval_metric="MASE",

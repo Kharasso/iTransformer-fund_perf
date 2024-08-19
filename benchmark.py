@@ -87,21 +87,21 @@ for i in train_df.PRODUCTREFERENCE.unique():
 train_data_df = pd.concat(windows).reset_index(drop=True)
 train_data_df['date'] = pd.to_datetime(train_data_df['date'], format= '%Y-%m-%d' )
 
-static_features_df = train_data_df[['series_id', 'PRODUCTREFERENCE']].drop_duplicates().reset_index(drop=True)
-predict_static_features = predict_df[['series_id', 'PRODUCTREFERENCE']].drop_duplicates().reset_index(drop=True)
+# static_features_df = train_data_df[['series_id', 'PRODUCTREFERENCE']].drop_duplicates().reset_index(drop=True)
+# predict_static_features = predict_df[['series_id', 'PRODUCTREFERENCE']].drop_duplicates().reset_index(drop=True)
 
 train_data = TimeSeriesDataFrame.from_data_frame(
     train_data_df.drop(columns=['PRODUCTREFERENCE']),
     id_column="series_id",
     timestamp_column="date", 
-    static_features_df=static_features_df,
+    # static_features_df=static_features_df,
 )
 
 predict_data = TimeSeriesDataFrame.from_data_frame(
     predict_df.drop(columns=['PRODUCTREFERENCE']),
     id_column="series_id",
     timestamp_column="date", 
-    static_features_df=predict_static_features,
+    # static_features_df=predict_static_features,
 )
 
 predictor = TimeSeriesPredictor(
